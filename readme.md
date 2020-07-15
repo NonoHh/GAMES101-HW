@@ -47,3 +47,10 @@ I'm also an introductory learner of Computer Graphics, so if there are any mista
 This repository stores assignments that broadcasted live on Huya in the spring of 2020.
 
 The requirements and basic code framework for the assignment can be downloaded from the [summary post](http://games-cn.org/forums/topic/allhw/) in the BBS.
+
+
+
+<!-- LICENSE -->
+## License
+
+Distributed under the GPL v3.0 License. See `LICENSE` for more information.
