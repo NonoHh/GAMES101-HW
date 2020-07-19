@@ -134,7 +134,9 @@ Vector3f castRay(
     {
         Vector3f hitPoint = orig + dir * payload->tNear;
         Vector3f N; // normal
-        Vector2f st; // st coordinates
+        // st coordinates --- texture coordinates, same as uv in our course
+        // since here we have used uv to describe the barycentric coordinates.
+        Vector2f st; 
         payload->hit_obj->getSurfaceProperties(hitPoint, dir, payload->index, payload->uv, N, st);
         switch (payload->hit_obj->materialType) {
             case REFLECTION_AND_REFRACTION:
@@ -224,11 +226,7 @@ void Renderer::Render(const Scene& scene)
         {
             // generate primary ray direction
             float x;
-            float y;
-            // TODO: Find the x and y positions of the current pixel to get the direction
-            // vector that passes through it.
-            // Also, don't forget to multiply both of them with the variable *scale*, and
-            // x (horizontal) variable with the *imageAspectRatio*            
+            float y;         
 
             x = 2.0 * scale * imageAspectRatio * (i + 0.5 - scene.width / 2) / scene.width;
             y = -2.0 * scale * (j + 0.5 - scene.height / 2) / scene.height;
