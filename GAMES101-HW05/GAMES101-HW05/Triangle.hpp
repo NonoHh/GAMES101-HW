@@ -23,7 +23,6 @@ bool rayTriangleIntersect(const Vector3f& v0, const Vector3f& v1, const Vector3f
     tnear = res.x;
     u = res.y;
     v = res.z;
-    // return u >= -FLT_EPSILON && v >= -FLT_EPSILON && (1 - u - v) >= -FLT_EPSILON && tnear >= -FLT_EPSILON;
     return u >= -std::numeric_limits<float>::epsilon() && v >= -std::numeric_limits<float>::epsilon() && (1 - u - v) >= -std::numeric_limits<float>::epsilon() && tnear >= -std::numeric_limits<float>::epsilon();
 }
 
