@@ -39,9 +39,6 @@
     <ClInclude Include="OBJ_Loader.hpp">
       <Filter>头文件</Filter>
     </ClInclude>
-    <ClInclude Include="Object.hpp">
-      <Filter>头文件</Filter>
-    </ClInclude>
     <ClInclude Include="Ray.hpp">
       <Filter>头文件</Filter>
     </ClInclude>
@@ -58,6 +55,9 @@
       <Filter>头文件</Filter>
     </ClInclude>
     <ClInclude Include="Vector.hpp">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="Primitive.hpp">
       <Filter>头文件</Filter>
     </ClInclude>
   </ItemGroup>

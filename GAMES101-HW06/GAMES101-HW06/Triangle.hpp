@@ -4,7 +4,7 @@
 #include "Intersection.hpp"
 #include "Material.hpp"
 #include "OBJ_Loader.hpp"
-#include "Object.hpp"
+#include "Primitive.hpp"
 #include "Triangle.hpp"
 #include <cassert>
 #include <array>
@@ -39,7 +39,7 @@ bool rayTriangleIntersect(const Vector3f& v0, const Vector3f& v1,
     return true;
 }
 
-class Triangle : public Object
+class Triangle : public Primitive
 {
 public:
     Vector3f v0, v1, v2; // vertices A, B ,C , counter-clockwise order
@@ -72,7 +72,7 @@ public:
     Bounds3 getBounds() override;
 };
 
-class MeshTriangle : public Object
+class MeshTriangle : public Primitive
 {
 public:
     MeshTriangle(const std::string& filename)
@@ -119,7 +119,7 @@ public:
 
         bounding_box = Bounds3(min_vert, max_vert);
 
-        std::vector<Object*> ptrs;
+        std::vector<Primitive*> ptrs;
         for (auto& tri : triangles)
             ptrs.push_back(&tri);
 

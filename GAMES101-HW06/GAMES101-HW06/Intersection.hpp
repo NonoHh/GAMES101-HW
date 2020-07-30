@@ -6,7 +6,7 @@
 #define RAYTRACING_INTERSECTION_H
 #include "Vector.hpp"
 #include "Material.hpp"
-class Object;
+class Primitive;
 class Sphere;
 
 struct Intersection
@@ -23,7 +23,7 @@ struct Intersection
     Vector3f coords;
     Vector3f normal;
     double distance;
-    Object* obj;
+    Primitive* obj;
     Material* m;
 };
 #endif //RAYTRACING_INTERSECTION_H

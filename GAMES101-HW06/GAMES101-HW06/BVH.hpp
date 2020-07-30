@@ -9,7 +9,7 @@
 #include <vector>
 #include <memory>
 #include <ctime>
-#include "Object.hpp"
+#include "Primitive.hpp"
 #include "Ray.hpp"
 #include "Bounds3.hpp"
 #include "Intersection.hpp"
@@ -25,10 +25,10 @@ class BVHAccel {
 
 public:
     // BVHAccel Public Types
-    enum class SplitMethod { NAIVE, SAH };
+    enum class SplitMethod { Middle, SAH };
 
     // BVHAccel Public Methods
-    BVHAccel(std::vector<Object*> p, int maxPrimsInNode = 1, SplitMethod splitMethod = SplitMethod::NAIVE);
+    BVHAccel(std::vector<Primitive*> p, int maxPrimsInNode = 1, SplitMethod splitMethod = SplitMethod::Middle);
     Bounds3 WorldBound() const;
     ~BVHAccel();
 
@@ -38,19 +38,19 @@ public:
     BVHBuildNode* root;
 
     // BVHAccel Private Methods
-    BVHBuildNode* recursiveBuild(std::vector<Object*>objects);
+    BVHBuildNode* recursiveBuild(std::vector<Primitive*>objects);
 
     // BVHAccel Private Data
     const int maxPrimsInNode;
     const SplitMethod splitMethod;
-    std::vector<Object*> primitives;
+    std::vector<Primitive*> primitives;
 };
 
 struct BVHBuildNode {
     Bounds3 bounds;
     BVHBuildNode *left;
     BVHBuildNode *right;
-    Object* object;
+    Primitive* object;
 
 public:
     int splitAxis=0, firstPrimOffset=0, nPrimitives=0;

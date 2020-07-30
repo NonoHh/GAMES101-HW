@@ -148,7 +148,7 @@
     <ClInclude Include="Intersection.hpp" />
     <ClInclude Include="Light.hpp" />
     <ClInclude Include="Material.hpp" />
-    <ClInclude Include="Object.hpp" />
+    <ClInclude Include="Primitive.hpp" />
     <ClInclude Include="OBJ_Loader.hpp" />
     <ClInclude Include="Ray.hpp" />
     <ClInclude Include="Renderer.hpp" />

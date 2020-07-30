@@ -2,7 +2,7 @@
 #include <cassert>
 #include "BVH.hpp"
 
-BVHAccel::BVHAccel(std::vector<Object*> p, int maxPrimsInNode,
+BVHAccel::BVHAccel(std::vector<Primitive*> p, int maxPrimsInNode,
                    SplitMethod splitMethod)
     : maxPrimsInNode(std::min(255, maxPrimsInNode)), splitMethod(splitMethod),
       primitives(std::move(p))
@@ -25,7 +25,7 @@ BVHAccel::BVHAccel(std::vector<Object*> p, int maxPrimsInNode,
         hrs, mins, secs);
 }
 
-BVHBuildNode* BVHAccel::recursiveBuild(std::vector<Object*> objects)
+BVHBuildNode* BVHAccel::recursiveBuild(std::vector<Primitive*> objects)
 {
     BVHBuildNode* node = new BVHBuildNode();
 
@@ -78,8 +78,8 @@ BVHBuildNode* BVHAccel::recursiveBuild(std::vector<Object*> objects)
     auto middling = objects.begin() + (objects.size() / 2);
     auto ending = objects.end();
 
-    auto leftshapes = std::vector<Object*>(beginning, middling);
-    auto rightshapes = std::vector<Object*>(middling, ending);
+    auto leftshapes = std::vector<Primitive*>(beginning, middling);
+    auto rightshapes = std::vector<Primitive*>(middling, ending);
 
     assert(objects.size() == (leftshapes.size() + rightshapes.size()));
 

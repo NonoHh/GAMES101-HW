@@ -7,7 +7,7 @@
 
 void Scene::buildBVH() {
     printf(" - Generating BVH...\n\n");
-    this->bvh = new BVHAccel(objects, 1, BVHAccel::SplitMethod::NAIVE);
+    this->bvh = new BVHAccel(objects, 1, BVHAccel::SplitMethod::Middle);
 }
 
 Intersection Scene::intersect(const Ray &ray) const
@@ -17,8 +17,8 @@ Intersection Scene::intersect(const Ray &ray) const
 
 bool Scene::trace(
         const Ray &ray,
-        const std::vector<Object*> &objects,
-        float &tNear, uint32_t &index, Object **hitObject)
+        const std::vector<Primitive*> &objects,
+        float &tNear, uint32_t &index, Primitive **hitObject)
 {
     *hitObject = nullptr;
     for (uint32_t k = 0; k < objects.size(); ++k) {
@@ -57,7 +57,7 @@ Vector3f Scene::castRay(const Ray &ray, int depth) const
     }
     Intersection intersection = Scene::intersect(ray);
     Material *m = intersection.m;
-    Object *hitObject = intersection.obj;
+    Primitive *hitObject = intersection.obj;
     Vector3f hitColor = this->backgroundColor;
 //    float tnear = kInfinity;
     Vector2f uv;
@@ -126,7 +126,7 @@ Vector3f Scene::castRay(const Ray &ray, int depth) const
                         float lightDistance2 = dotProduct(lightDir, lightDir);
                         lightDir = normalize(lightDir);
                         float LdotN = std::max(0.f, dotProduct(lightDir, N));
-                        Object *shadowHitObject = nullptr;
+                        Primitive *shadowHitObject = nullptr;
                         float tNearShadow = kInfinity;
                         // is the point in shadow, and is the nearest occluding object closer to the object than the light itself?
                         bool inShadow = bvh->Intersect(Ray(shadowPointOrig, lightDir)).happened;

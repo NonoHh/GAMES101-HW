@@ -11,11 +11,11 @@
 #include "Ray.hpp"
 #include "Intersection.hpp"
 
-class Object
+class Primitive
 {
 public:
-    Object() {}
-    virtual ~Object() {}
+    Primitive() {}
+    virtual ~Primitive() {}
     virtual bool intersect(const Ray& ray) = 0;
     virtual bool intersect(const Ray& ray, float &, uint32_t &) const = 0;
     virtual Intersection getIntersection(Ray _ray) = 0;
