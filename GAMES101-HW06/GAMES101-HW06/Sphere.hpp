@@ -5,7 +5,7 @@
 #ifndef RAYTRACING_SPHERE_H
 #define RAYTRACING_SPHERE_H
 
-#include "Object.hpp"
+#include "Primitive.hpp"
 #include "Vector.hpp"
 #include "Bounds3.hpp"
 #include "Material.hpp"

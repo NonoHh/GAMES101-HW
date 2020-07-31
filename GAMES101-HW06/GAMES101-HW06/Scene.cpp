@@ -7,7 +7,8 @@
 
 void Scene::buildBVH() {
     printf(" - Generating BVH...\n\n");
-    this->bvh = new BVHAccel(objects, 1, BVHAccel::SplitMethod::Middle);
+    // this->bvh = new BVHAccel(objects, 1, BVHAccel::SplitMethod::Middle);
+    this->bvh = new BVHAccel(objects, 1, BVHAccel::SplitMethod::SAH);
 }
 
 Intersection Scene::intersect(const Ray &ray) const
