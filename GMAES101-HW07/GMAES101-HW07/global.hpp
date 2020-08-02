@@ -36,10 +36,9 @@ inline float get_random_float()
 
     return dist(rng);
 }
-
 inline void UpdateProgress(float progress)
 {
-    int barWidth = 70;
+    int barWidth = 100;
 
     std::cout << "[";
     int pos = barWidth * progress;
@@ -48,6 +47,6 @@ inline void UpdateProgress(float progress)
         else if (i == pos) std::cout << ">";
         else std::cout << " ";
     }
-    std::cout << "] " << int(progress * 100.0) << " %\r";
+    std::cout << "] " << int(progress * 100.0) << " %\r"; 
     std::cout.flush();
-};
+}
