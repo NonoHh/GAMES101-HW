@@ -6,11 +6,11 @@
 #define RAYTRACING_MATERIAL_H
 
 #include "Vector.hpp"
+#include "global.hpp"
 
 enum MaterialType { DIFFUSE};
 
 class Material{
-private:
 
     // Compute reflection direction
     Vector3f reflect(const Vector3f &I, const Vector3f &N) const
@@ -89,12 +89,15 @@ public:
     MaterialType m_type;
     //Vector3f m_color;
     Vector3f m_emission;
-    float ior;
+    float ior = 2;
     Vector3f Kd, Ks;
     float specularExponent;
     //Texture tex;
+    Vector2f roughness;
+    float alphax, alphay;
 
-    inline Material(MaterialType t=DIFFUSE, Vector3f e=Vector3f(0,0,0));
+    inline Material(MaterialType t=DIFFUSE, Vector3f e=Vector3f(0,0,0),Vector2f r = Vector2f(1,1));
+    inline Material(float i, MaterialType t = DIFFUSE, Vector3f e = Vector3f(0, 0, 0), Vector2f r = Vector2f(1, 1));
     inline MaterialType getType();
     //inline Vector3f getColor();
     inline Vector3f getColorAt(double u, double v);
@@ -108,12 +111,30 @@ public:
     // given a ray, calculate the contribution of this ray
     inline Vector3f eval(const Vector3f &wi, const Vector3f &wo, const Vector3f &N);
 
+    inline float GGX_D(const Vector3f& wh);
+
+    inline float RoughnessToAlpha(float roughness);
+    inline float Lambda(const Vector3f& w);
+    inline float Smith_G(const Vector3f& wo, const Vector3f& wi);
 };
 
-Material::Material(MaterialType t, Vector3f e){
+Material::Material(MaterialType t, Vector3f e,Vector2f r){
     m_type = t;
     //m_color = c;
     m_emission = e;
+    roughness = r;
+    alphax = RoughnessToAlpha(r.x);
+    alphay = RoughnessToAlpha(r.y);
+}
+
+Material::Material(float i, MaterialType t, Vector3f e, Vector2f r) {
+    ior = i;
+    m_type = t;
+    //m_color = c;
+    m_emission = e;
+    roughness = r;
+    alphax = RoughnessToAlpha(r.x);
+    alphay = RoughnessToAlpha(r.y);
 }
 
 MaterialType Material::getType(){return m_type;}
@@ -159,20 +180,60 @@ float Material::pdf(const Vector3f &wi, const Vector3f &wo, const Vector3f &N){
     }
 }
 
-Vector3f Material::eval(const Vector3f &wi, const Vector3f &wo, const Vector3f &N){
-    switch(m_type){
-        case DIFFUSE:
-        {
-            // calculate the contribution of diffuse   model
-            float cosalpha = dotProduct(N, wo);
-            if (cosalpha > 0.0f) {
-                Vector3f diffuse = Kd / M_PI;
-                return diffuse;
-            }
-            else
-                return Vector3f(0.0f);
-            break;
+inline float Material::RoughnessToAlpha(float roughness) {
+    roughness = std::max(roughness, (float)1e-3);
+    float x = std::log(roughness);
+    return 1.62142f + 0.819955f * x + 0.1734f * x * x + 0.0171201f * x * x * x +
+        0.000640711f * x * x * x * x;
+}
+
+inline float Material::GGX_D(const Vector3f& wh) {
+    float tan2Theta = Tan2Theta(wh);
+    if (std::isinf(tan2Theta)) return 0.;
+    const float cos4Theta = Cos2Theta(wh) * Cos2Theta(wh);
+    float e = (Cos2Phi(wh) / (alphax * alphax) +
+        Sin2Phi(wh) / (alphay * alphay)) * tan2Theta;
+    return 1 / (M_PI * alphax * alphay * cos4Theta * (1 + e) * (1 + e));
+}
+
+inline float Material::Lambda(const Vector3f& w) {
+    float absTanTheta = std::abs(TanTheta(w));
+    if (std::isinf(absTanTheta)) return 0.;
+    float alpha = std::sqrt(Cos2Phi(w) * alphax * alphax + Sin2Phi(w) * alphay * alphay);
+    float alpha2Tan2Theta = (alpha * absTanTheta) * (alpha * absTanTheta);
+    return (-1 + std::sqrt(1.f + alpha2Tan2Theta)) / 2;
+}
+
+inline float Material::Smith_G(const Vector3f& wo, const Vector3f& wi) {
+    return 1 / (1 + Lambda(wo) + Lambda(wi));
+}
+
+Vector3f Material::eval(const Vector3f& wi, const Vector3f& wo, const Vector3f& N) {
+    switch (m_type) {
+    case DIFFUSE:
+    {
+        // calculate the contribution of diffuse   model
+        Vector3f diffuse = Vector3f(0);
+        float cosalpha = dotProduct(N, wo);
+        if (cosalpha > 0.0f) {
+            diffuse = Kd / M_PI;
         }
+
+        float cosThetaO = AbsCosTheta(wo), cosThetaI = AbsCosTheta(wi);
+        if (cosThetaI == 0 || cosThetaO == 0) {
+            return diffuse;
+        }
+        auto wh = normalize(wi + wo);
+        if (wh.x == 0 && wh.y == 0 && wh.z == 0) {
+            return diffuse;
+        }
+        float kr = 0;
+        fresnel(wi, N, ior, kr);
+        auto D = GGX_D(wh);
+        auto G = Smith_G(wo, wi);
+
+        return Vector3f(D * G * kr / (4 * dotProduct(N, wi) * dotProduct(N, wo))) + diffuse;
+    }
     }
 }
 

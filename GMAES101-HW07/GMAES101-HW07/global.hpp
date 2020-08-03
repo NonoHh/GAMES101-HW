@@ -36,6 +36,7 @@ inline float get_random_float()
 
     return dist(rng);
 }
+
 inline void UpdateProgress(float progress)
 {
     int barWidth = 100;
@@ -49,4 +50,42 @@ inline void UpdateProgress(float progress)
     }
     std::cout << "] " << int(progress * 100.0) << " %\r"; 
     std::cout.flush();
+}
+
+// BSDF Inline Functions
+inline float CosTheta(const Vector3f& w) { return w.z; }
+inline float Cos2Theta(const Vector3f& w) { return w.z * w.z; }
+inline float AbsCosTheta(const Vector3f& w) { return std::abs(w.z); }
+inline float Sin2Theta(const Vector3f& w) {
+    return std::max(0.0, 1.0 - Cos2Theta(w));
+}
+
+inline float SinTheta(const Vector3f& w) { return std::sqrt(Sin2Theta(w)); }
+
+inline float TanTheta(const Vector3f& w) { return SinTheta(w) / CosTheta(w); }
+
+inline float Tan2Theta(const Vector3f& w) {
+    return Sin2Theta(w) / Cos2Theta(w);
+}
+
+inline float CosPhi(const Vector3f& w) {
+    float sinTheta = SinTheta(w);
+    return (sinTheta == 0) ? 1 : clamp(w.x / sinTheta, -1, 1);
+}
+
+inline float SinPhi(const Vector3f& w) {
+    float sinTheta = SinTheta(w);
+    return (sinTheta == 0) ? 0 : clamp(w.y / sinTheta, -1, 1);
+}
+
+inline float Cos2Phi(const Vector3f& w) { return CosPhi(w) * CosPhi(w); }
+
+inline float Sin2Phi(const Vector3f& w) { return SinPhi(w) * SinPhi(w); }
+
+inline float CosDPhi(const Vector3f& wa, const Vector3f& wb) {
+    float waxy = wa.x * wa.x + wa.y * wa.y;
+    float wbxy = wb.x * wb.x + wb.y * wb.y;
+    if (waxy == 0 || wbxy == 0)
+        return 1;
+    return clamp((wa.x * wb.x + wa.y * wb.y) / std::sqrt(waxy * wbxy), -1, 1);
 }
